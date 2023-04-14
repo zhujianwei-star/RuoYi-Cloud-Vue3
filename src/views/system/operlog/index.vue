@@ -206,8 +206,17 @@ const total = ref(0);
 const title = ref("");
 const dateRange = ref([]);
 const defaultSort = ref({ prop: "operTime", order: "descending" });
+const form = ref({})
+const queryParams = ref({
+   pageNum: 1,
+   pageSize: 10,
+   title: undefined,
+   operName: undefined,
+   businessType: undefined,
+   status: undefined
+})
 
-const data = reactive({
+/*const data = reactive({
   form: {},
   queryParams: {
     pageNum: 1,
@@ -219,7 +228,7 @@ const data = reactive({
   }
 });
 
-const { queryParams, form } = toRefs(data);
+const { queryParams, form } = toRefs(data);*/
 
 /** 查询登录日志 */
 function getList() {

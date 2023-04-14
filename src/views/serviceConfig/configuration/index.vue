@@ -65,12 +65,28 @@
         v-model:limit="queryParams.pageSize"
         @pagination="getList"
     />
+
+    <el-dialog
+        v-model="dialogVisible"
+        title="Tips"
+        width="30%"
+    >
+      <span>This is a message</span>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="dialogVisible = false">
+          Confirm
+        </el-button>
+      </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts" setup name="configuration">
 
-import listConfiguration from "@/api/serviceConfig/configuration";
+import {listConfiguration, getConfigurationById} from "@/api/serviceConfig/configuration.js";
 import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 
 const { proxy } = getCurrentInstance();
@@ -88,7 +104,10 @@ const data = reactive({
     pageSize: 10,
     cdesc: undefined,
     dataId: undefined,
-    type: undefined
+    type: undefined,
+    orderByColumn: undefined,
+    isAsc: undefined,
+    cDesc: undefined,
   },
   rules: {
     parentId: [{ required: true, message: "上级部门不能为空", trigger: "blur" }],
@@ -125,7 +144,6 @@ function getList() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  dateRange.value = [];
   proxy.resetForm("queryRef");
   queryParams.value.pageNum = 1;
   proxy.$refs["operlogRef"].sort(defaultSort.value.prop, defaultSort.value.order);
@@ -148,6 +166,13 @@ function handleQuery() {
 
 getList();
 
+/**
+ * 弹出框相关数据
+ */
+const dialogVisible = ref(false)
+const dialogData = reactive({
+
+})
 </script>
 
 <style scoped>
