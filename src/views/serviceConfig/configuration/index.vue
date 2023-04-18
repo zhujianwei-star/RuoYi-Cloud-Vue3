@@ -68,10 +68,44 @@
 
     <el-dialog
         v-model="dialogVisible"
-        title="Tips"
-        width="30%"
+        title="修改服务配置"
+        width="75%"
     >
-      <span>This is a message</span>
+      <el-dialog
+          v-model="openYamlEditor"
+          width="75%"
+          title="服务配置内容"
+          append-to-body
+          @close="closeDialog"
+      >
+        <yaml-editor
+            ref="yamlEditorRef"
+        />
+      </el-dialog>
+      <el-row :gutter="24">
+        <el-col :span="12">
+          <el-form-item label="服务名称：">{{ configurationData.cdesc }}</el-form-item>
+          <el-form-item label="创建人：">{{ configurationData.srcUser }} </el-form-item>
+          <el-form-item label="创建时间：">{{ parseTime(configurationData.gmtCreate) }}</el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="文档类型：">{{ configurationData.type }}</el-form-item>
+          <el-form-item label="配置文件：">{{ configurationData.dataId }} </el-form-item>
+          <el-form-item label="更新时间：">{{ parseTime(configurationData.gmtModified) }}</el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="24">
+        <el-col :span="12">
+          <el-form-item label="服务分组：">{{ configurationData.groupId }}</el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="配置内容：">
+            <el-button type="primary" @click="handleYamlEditor(configurationData.content)">
+              展示配置内容
+            </el-button>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
@@ -87,7 +121,8 @@
 <script lang="ts" setup name="configuration">
 
 import {listConfiguration, getConfigurationById} from "@/api/serviceConfig/configuration.js";
-import {getCurrentInstance, reactive, ref, toRefs} from "vue";
+import {getCurrentInstance, nextTick, reactive, ref, toRefs} from "vue";
+import YamlEditor from "@/components/YamlEditor"
 
 const { proxy } = getCurrentInstance();
 const configurationList = ref([]);
@@ -98,7 +133,16 @@ const defaultSort = ref({ prop: "operTime", order: "descending" });
 
 
 const data = reactive({
-  form: {},
+  configurationData: {
+    cdesc: undefined,
+    dataId: undefined,
+    type: undefined,
+    srcUser: undefined,
+    groupId: undefined,
+    gmtCreate: undefined,
+    gmtModified: undefined,
+    content: undefined,
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -119,7 +163,7 @@ const data = reactive({
 });
 
 
-const { queryParams, form, rules } = toRefs(data);
+const { queryParams, configurationData, rules } = toRefs(data);
 
 function handleSelectionChange(a,b,c) {
   console.log(a,b,c)
@@ -151,7 +195,11 @@ function resetQuery() {
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
-  console.log(row)
+  getConfigurationById(row.id).then(res => {
+    configurationData.value = res.data;
+    dialogVisible.value = true;
+    console.log(configurationData)
+  })
 }
 
 /** 删除按钮操作 */
@@ -170,9 +218,30 @@ getList();
  * 弹出框相关数据
  */
 const dialogVisible = ref(false)
-const dialogData = reactive({
 
-})
+/**
+ * 内容弹出框相关
+ */
+// 是否弹出内容
+const openYamlEditor = ref(false)
+
+// 模板中ref的名称，必须和变量名相同，且ref函数包裹null，必须return出去
+const yamlEditorRef = ref()
+/**
+ * 内容按钮操作
+ */
+function handleYamlEditor(content: string|undefined) {
+  openYamlEditor.value = true;
+  nextTick(() => {
+    console.log(proxy.$refs.yamlEditorRef)
+    proxy.$refs.yamlEditorRef.setValue(content)
+  })
+}
+
+function closeDialog() {
+  console.log(proxy.$refs.yamlEditorRef.getValue());
+}
+
 </script>
 
 <style scoped>
