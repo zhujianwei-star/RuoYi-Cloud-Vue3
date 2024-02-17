@@ -24,7 +24,15 @@ import elementIcons from '@/components/SvgIcon/svgicon'
 import './permission' // permission control
 
 import { useDict } from '@/utils/dict'
-import { parseTime, resetForm, addDateRange, handleTree, selectDictLabel, selectDictLabels } from '@/utils/ruoyi'
+import {
+    parseTime,
+    resetForm,
+    addDateRange,
+    handleTree,
+    selectDictLabel,
+    selectDictLabels,
+    resetFormRef
+} from '@/utils/ruoyi.js'
 
 // 分页组件
 import Pagination from '@/components/Pagination/index.vue'
@@ -54,6 +62,16 @@ app.config.globalProperties.handleTree = handleTree
 app.config.globalProperties.addDateRange = addDateRange
 app.config.globalProperties.selectDictLabel = selectDictLabel
 app.config.globalProperties.selectDictLabels = selectDictLabels
+app.provide('useDict', useDict)
+app.provide('download', download)
+app.provide('parseTime', parseTime)
+app.provide('resetForm', resetForm)
+app.provide('resetFormRef', resetFormRef)
+app.provide('handleTree', handleTree)
+app.provide('addDateRange', addDateRange)
+app.provide('selectDictLabel', selectDictLabel)
+app.provide('selectDictLabels', selectDictLabels)
+
 
 // 全局组件挂载
 app.component('DictTag', DictTag)

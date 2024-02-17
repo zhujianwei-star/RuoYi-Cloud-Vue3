@@ -672,7 +672,7 @@
               <li>升级element-ui版本到2.13.2</li>
               <li>删除babel，提高编译速度</li>
               <li>修复验证码异常时network面板的中文会出现乱码问题</li>
-              <li>修复 utils/index.js 中不包含 parseTime 函数的 bug</li>
+              <li>修复 utils/index.ts 中不包含 parseTime 函数的 bug</li>
               <li>优化selectDictLabel方法，数组迭代器换为some</li>
               <li>修复客户端模式认证会出现错误</li>
               <li>检查字符支持小数点&降级改成异常提醒</li>

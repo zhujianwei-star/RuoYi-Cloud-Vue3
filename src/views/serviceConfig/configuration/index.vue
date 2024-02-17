@@ -180,7 +180,7 @@ function handleSortChange(column, prop, order) {
 function getList() {
   loading.value = true;
   listConfiguration(queryParams.value).then(response => {
-    configurationList.value = response.records;
+    configurationList.value = response.rows;
     total.value = response.total;
     loading.value = false;
   });

@@ -5,6 +5,8 @@
  * Copyright (c) 2019 ruoyi
  */
 
+import { onUpdated } from "vue"
+
 // 日期格式化
 export function parseTime(time, pattern) {
   if (arguments.length === 0 || !time) {
@@ -51,6 +53,15 @@ export function resetForm(refName) {
   if (this.$refs[refName]) {
     this.$refs[refName].resetFields();
   }
+}
+
+export function resetFormRef(refName) {
+  console.log(refName)
+  onUpdated(() => {
+    if (refName) {
+      refName.value.resetFields();
+    }
+  })
 }
 
 // 添加日期范围
