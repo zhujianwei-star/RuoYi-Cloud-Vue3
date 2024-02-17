@@ -39,11 +39,11 @@
                 @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="创建时间" style="width: 308px;">
+          <el-form-item label="创建时间" style="width: 430px;">
             <el-date-picker
                 v-model="dateRange"
-                value-format="YYYY-MM-DD"
-                type="daterange"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                type="datetimerange"
                 range-separator="-"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -257,6 +257,9 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+  if (queryParams.value.pid) {
+    form.value.pid = queryParams.value.pid
+  }
   open.value = true;
   title.value = "添加参数";
 }
