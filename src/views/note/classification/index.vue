@@ -306,9 +306,9 @@ function handleDelete(row) {
 }
 /** 导出按钮操作 */
 function handleExport() {
-  download("system/config/export", {
+  download("note/classification/export", {
     ...queryParams.value
-  }, `config_${new Date().getTime()}.xlsx`);
+  }, `noteClassification_${new Date().getTime()}.xlsx`);
 }
 
 /* 表单中选择了父类，更改form表单的等级 */

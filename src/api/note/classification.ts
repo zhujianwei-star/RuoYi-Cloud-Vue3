@@ -69,6 +69,18 @@ export function delClassification(classificationId:number) {
     })
 }
 
+/**
+ * 分页请求分类的方法
+ * @returns 分页请求分类的promise对象
+ */
+export function exportClassification(params:ClassificationParamsInter) {
+    return request({
+        url: '/note/classification/exprot',
+        method: 'get',
+        params: params
+    })
+}
+
 export interface ClassificationParamsInter {
     pageNo: number,
     pageSize: number,
