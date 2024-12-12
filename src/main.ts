@@ -3,7 +3,9 @@ import { createApp } from 'vue'
 import Cookies from 'js-cookie'
 
 import ElementPlus from 'element-plus'
-import locale from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import 'element-plus/dist/index.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
+import locale from 'element-plus/es/locale/lang/zh-cn' // 中文语言
 
 import '@/assets/styles/index.scss' // global css
 
@@ -46,8 +48,6 @@ import FileUpload from "@/components/FileUpload/index.vue"
 import ImageUpload from "@/components/ImageUpload/index.vue"
 // 图片预览组件
 import ImagePreview from "@/components/ImagePreview/index.vue"
-// 自定义树选择组件
-import TreeSelect from '@/components/TreeSelect/index.vue'
 // 字典标签组件
 import DictTag from '@/components/DictTag/index.vue'
 
@@ -76,7 +76,6 @@ app.provide('selectDictLabels', selectDictLabels)
 // 全局组件挂载
 app.component('DictTag', DictTag)
 app.component('Pagination', Pagination)
-app.component('TreeSelect', TreeSelect)
 app.component('FileUpload', FileUpload)
 app.component('ImageUpload', ImageUpload)
 app.component('ImagePreview', ImagePreview)

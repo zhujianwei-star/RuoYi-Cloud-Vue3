@@ -4,9 +4,10 @@ import cache from './cache'
 import modal from './modal'
 import download from './download'
 import {App} from "vue";
+import type { Plugin } from "vue";
 
 
-const plugins = {
+const plugins:Plugin = {
   install:(app: App, options: any) => {
     // 页签操作
     app.config.globalProperties.$tab = tab
