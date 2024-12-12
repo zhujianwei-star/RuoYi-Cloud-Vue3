@@ -87,6 +87,16 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
+                type="success"
+                plain
+                icon="View"
+                :disabled="multiple"
+                @click="handleView"
+                v-hasPermi="['note:classification:remove']"
+            >查看</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button
                 type="warning"
                 plain
                 icon="Download"
@@ -160,12 +170,19 @@
         </div>
       </template>
     </el-dialog>
+
+    
+    
+    <!-- 添加或修改参数配置对话框 -->
+    <el-dialog :title="title" v-model="openInfo" width="500px" append-to-body ref="dialogInfoRef">
+      <el-text class="mx-1">{{ extInfo }}</el-text>
+    </el-dialog>
   </div>
   <!-- <HelloWorld msg="Hello Vue 3 + Vite" /> -->
 </template>
 
 <script setup name="NoteClassification" lang="ts">
-import { noteClassificationTreeSelect, listClassification, addClassification, getClassification, delClassification, updateClassification } from "@/api/note/classification";
+import { noteClassificationTreeSelect, listClassification, addClassification, getClassification, delClassification, updateClassification, viewInfo } from "@/api/note/classification";
 import { reactive, ref, toRefs, inject } from "vue";
 import { ElForm } from "element-plus";
 const addDateRange : any = inject('addDateRange')
@@ -188,6 +205,9 @@ const dateRange = ref([]);
 const classificationRef = ref();
 const dialogRef = ref();
 const queryRef = ref();
+const openInfo = ref(false);
+const dialogInfoRef = ref();
+const extInfo = ref();
 
 const data = reactive({
   form: {
@@ -218,6 +238,45 @@ function getList() {
     total.value = response.total;
     loading.value = false;
   });
+}
+
+/** 查询参数列表 */
+function handleView() {
+  loading.value = true;
+  async () => {
+    try {
+      const response = await fetch(viewInfo());
+
+      /* if (!response.ok) {
+        throw new Error(`OpenAI API请求失败，状态码：${response.status}`);
+      } */
+
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          break;
+        }
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.trim() !== '') {
+            try {
+              extInfo.value = extInfo.value + '\n' + JSON.parse(line);
+            } catch (parseError) {
+              console.error('解析JSON时出错:', parseError);
+            }
+          }
+        }
+      }
+    } catch (fetchError) {
+      extInfo.value = (fetchError as Error).message;
+    }
+  }
 }
 /** 取消按钮 */
 function cancel() {

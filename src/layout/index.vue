@@ -1,17 +1,15 @@
 <template>
   <div :class="classObj" class="app-wrapper" :style="{ '--current-color': theme }">
-    <el-scrollbar>
-      <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
-      <sidebar v-if="!sidebar.hide" class="sidebar-container" />
-      <div :class="{ hasTagsView: needTagsView, sidebarHide: sidebar.hide }" class="main-container">
-        <div :class="{ 'fixed-header': fixedHeader }">
-          <navbar @setLayout="setLayout" />
-          <tags-view v-if="needTagsView" />
-        </div>
-        <app-main />
-        <settings ref="settingRef" />
+    <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
+    <sidebar v-if="!sidebar.hide" class="sidebar-container" />
+    <div :class="{ hasTagsView: needTagsView, sidebarHide: sidebar.hide }" class="main-container">
+      <div :class="{ 'fixed-header': fixedHeader }">
+        <navbar @setLayout="setLayout" />
+        <tags-view v-if="needTagsView" />
       </div>
-    </el-scrollbar>
+      <app-main />
+      <settings ref="settingRef" />
+    </div>
   </div>
 </template>
 
@@ -42,10 +40,13 @@ const classObj = computed(() => ({
 const { width, height } = useWindowSize();
 const WIDTH = 992; // refer to Bootstrap's responsive design
 
-watchEffect(() => {
+watch(() => device.value, () => {
   if (device.value === 'mobile' && sidebar.value.opened) {
     useAppStore().closeSideBar({ withoutAnimation: false })
   }
+})
+
+watchEffect(() => {
   if (width.value - 1 < WIDTH) {
     useAppStore().toggleDevice('mobile')
     useAppStore().closeSideBar({ withoutAnimation: true })
@@ -73,14 +74,6 @@ function setLayout() {
   position: relative;
   height: 100%;
   width: 100%;
-
-  .el-scrollbar{
-    height: 100%;
-  }
-
-  :deep(.el-scrollbar__wrap) {
-    overflow-x: hidden;
-  }
 
   &.mobile.openSidebar {
     position: fixed;

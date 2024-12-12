@@ -4,7 +4,7 @@
     fit="cover"
     :style="`width:${realWidth};height:${realHeight};`"
     :preview-src-list="realSrcList"
-    append-to-body="true"
+    preview-teleported
   >
     <template #error>
       <div class="image-slot">

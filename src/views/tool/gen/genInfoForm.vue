@@ -13,6 +13,16 @@
       </el-col>
 
       <el-col :span="12">
+        <el-form-item prop="tplWebType">
+          <template #label>前端类型</template>
+          <el-select v-model="info.tplWebType">
+            <el-option label="Vue2 Element UI 模版" value="element-ui" />
+            <el-option label="Vue3 Element Plus 模版" value="element-plus" />
+          </el-select>
+        </el-form-item>
+      </el-col>
+
+      <el-col :span="12">
         <el-form-item prop="packageName">
           <template #label>
             生成包路径
@@ -61,23 +71,6 @@
       </el-col>
 
       <el-col :span="12">
-        <el-form-item>
-          <template #label>
-            上级菜单
-            <el-tooltip content="分配到指定菜单下，例如 系统管理" placement="top">
-              <el-icon><question-filled /></el-icon>
-            </el-tooltip>
-          </template>
-          <tree-select
-            v-model:value="info.parentMenuId"
-            :options="menuOptions"
-            :objMap="{ value: 'menuId', label: 'menuName', children: 'children' }"
-            placeholder="请选择系统菜单"
-          />
-        </el-form-item>
-      </el-col>
-
-      <el-col :span="12">
         <el-form-item prop="genType">
           <template #label>
             生成代码方式
@@ -85,8 +78,27 @@
               <el-icon><question-filled /></el-icon>
             </el-tooltip>
           </template>
-          <el-radio v-model="info.genType" label="0">zip压缩包</el-radio>
-          <el-radio v-model="info.genType" label="1">自定义路径</el-radio>
+          <el-radio v-model="info.genType" value="0">zip压缩包</el-radio>
+          <el-radio v-model="info.genType" value="1">自定义路径</el-radio>
+        </el-form-item>
+      </el-col>
+
+      <el-col :span="12">
+        <el-form-item>
+          <template #label>
+            上级菜单
+            <el-tooltip content="分配到指定菜单下，例如 系统管理" placement="top">
+              <el-icon><question-filled /></el-icon>
+            </el-tooltip>
+          </template>
+          <el-tree-select
+            v-model="info.parentMenuId"
+            :data="menuOptions"
+            :props="{ value: 'menuId', label: 'menuName', children: 'children' }"
+            value-key="menuId"
+            placeholder="请选择系统菜单"
+            check-strictly
+          />
         </el-form-item>
       </el-col>
 
@@ -248,15 +260,18 @@ const rules = ref({
   businessName: [{ required: true, message: "请输入生成业务名", trigger: "blur" }],
   functionName: [{ required: true, message: "请输入生成功能名", trigger: "blur" }]
 });
+
 function subSelectChange(value) {
   props.info.subTableFkName = "";
 }
+
 function tplSelectChange(value) {
   if (value !== "sub") {
     props.info.subTableName = "";
     props.info.subTableFkName = "";
   }
 }
+
 function setSubTableColumns(value) {
   for (var item in props.tables) {
     const name = props.tables[item].tableName;
@@ -266,6 +281,7 @@ function setSubTableColumns(value) {
     }
   }
 }
+
 /** 查询菜单下拉树结构 */
 function getMenuTreeselect() {
   listMenu().then(response => {
@@ -273,9 +289,18 @@ function getMenuTreeselect() {
   });
 }
 
+onMounted(() => {
+  getMenuTreeselect();
+})
+
 watch(() => props.info.subTableName, val => {
   setSubTableColumns(val);
 });
 
-getMenuTreeselect();
+watch(() => props.info.tplWebType, val => {
+  if (val === '') {
+    props.info.tplWebType = "element-plus";
+  }
+});
+
 </script>

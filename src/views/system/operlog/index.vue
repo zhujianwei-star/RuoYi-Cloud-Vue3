@@ -1,6 +1,15 @@
 <template>
    <div class="app-container">
       <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+         <el-form-item label="操作地址" prop="operIp">
+            <el-input
+               v-model="queryParams.operIp"
+               placeholder="请输入操作地址"
+               clearable
+               style="width: 240px;"
+               @keyup.enter="handleQuery"
+            />
+         </el-form-item>
          <el-form-item label="系统模块" prop="title">
             <el-input
                v-model="queryParams.title"
@@ -109,7 +118,7 @@
          </el-table-column>
          <el-table-column label="请求方式" align="center" prop="requestMethod" />
          <el-table-column label="操作人员" align="center" prop="operName" width="110" :show-overflow-tooltip="true" sortable="custom" :sort-orders="['descending', 'ascending']" />
-         <el-table-column label="主机" align="center" prop="operIp" width="130" :show-overflow-tooltip="true" />
+         <el-table-column label="操作地址" align="center" prop="operIp" width="130" :show-overflow-tooltip="true" />
          <el-table-column label="操作状态" align="center" prop="status">
             <template #default="scope">
                <dict-tag :options="sys_common_status" :value="scope.row.status" />
@@ -141,7 +150,7 @@
       />
 
       <!-- 操作日志详细 -->
-      <el-dialog title="操作日志详细" v-model="open" width="700px" append-to-body>
+      <el-dialog title="操作日志详细" v-model="open" width="800px" append-to-body>
          <el-form :model="form" label-width="100px">
             <el-row>
                <el-col :span="12">
@@ -163,7 +172,7 @@
                <el-col :span="24">
                   <el-form-item label="返回参数：">{{ form.jsonResult }}</el-form-item>
                </el-col>
-               <el-col :span="6">
+               <el-col :span="8">
                   <el-form-item label="操作状态：">
                      <div v-if="form.status === 0">正常</div>
                      <div v-else-if="form.status === 1">失败</div>
@@ -172,7 +181,7 @@
                <el-col :span="8">
                   <el-form-item label="消耗时间：">{{ form.costTime }}毫秒</el-form-item>
                </el-col>
-               <el-col :span="10">
+               <el-col :span="8">
                   <el-form-item label="操作时间：">{{ parseTime(form.operTime) }}</el-form-item>
                </el-col>
                <el-col :span="24">
@@ -221,6 +230,7 @@ const queryParams = ref({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
+    operIp: undefined,
     title: undefined,
     operName: undefined,
     businessType: undefined,
@@ -239,15 +249,18 @@ function getList() {
     loading.value = false;
   });
 }
+
 /** 操作日志类型字典翻译 */
 function typeFormat(row, column) {
   return proxy.selectDictLabel(sys_oper_type.value, row.businessType);
 }
+
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
   getList();
 }
+
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = [];
@@ -255,22 +268,26 @@ function resetQuery() {
   queryParams.value.pageNum = 1;
   proxy.$refs["operlogRef"].sort(defaultSort.value.prop, defaultSort.value.order);
 }
+
 /** 多选框选中数据 */
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.operId);
   multiple.value = !selection.length;
 }
+
 /** 排序触发事件 */
 function handleSortChange(column, prop, order) {
   queryParams.value.orderByColumn = column.prop;
   queryParams.value.isAsc = column.order;
   getList();
 }
+
 /** 详细按钮操作 */
 function handleView(row) {
   open.value = true;
   form.value = row;
 }
+
 /** 删除按钮操作 */
 function handleDelete(row) {
   const operIds = row.operId || ids.value;
@@ -281,6 +298,7 @@ function handleDelete(row) {
     proxy.$modal.msgSuccess("删除成功");
   }).catch(() => {});
 }
+
 /** 清空按钮操作 */
 function handleClean() {
   proxy.$modal.confirm("是否确认清空所有操作日志数据项?").then(function () {
@@ -290,6 +308,7 @@ function handleClean() {
     proxy.$modal.msgSuccess("清空成功");
   }).catch(() => {});
 }
+
 /** 导出按钮操作 */
 function handleExport() {
   proxy.download("system/operlog/export",{

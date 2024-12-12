@@ -27,6 +27,17 @@ export function listClassification(params:ClassificationParamsInter) {
  * 分页请求分类的方法
  * @returns 分页请求分类的promise对象
  */
+export function viewInfo() {
+    return request({
+        url: '/note/ext/info',
+        method: 'get'
+    })
+}
+
+/**
+ * 分页请求分类的方法
+ * @returns 分页请求分类的promise对象
+ */
 export function addClassification(data:ClassificationDataInter) {
     return request({
         url: '/note/classification',
